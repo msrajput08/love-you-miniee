@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e0b1e" />
+  <meta name="description" content="A cinematic apology card for a best friend." />
+  <title>A Message From My Heart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@400;500;600&family=Parisienne&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <noscript>This experience needs JavaScript enabled.</noscript>
+
+  <div id="loading-screen" class="loading-screen" aria-live="polite">
+    <div class="loading-heart" aria-hidden="true"><span></span><span></span></div>
+    <p>Putting my feelings into words...</p>
+    <div class="loader-track"><span id="loader-bar"></span></div>
+    <strong id="loader-percent">0%</strong>
+  </div>
+
+  <div id="cursor-glow" aria-hidden="true"></div>
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+  <div class="aurora aurora-a" aria-hidden="true"></div>
+  <div class="aurora aurora-b" aria-hidden="true"></div>
+  <div class="film-grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <main id="experience" class="experience is-locked" aria-label="Interactive apology experience">
+    <section class="scene active" data-scene="0" id="opening">
+      <div class="scene-light"></div>
+      <div class="hero-shell reveal-group">
+        <span class="eyebrow">A message from my heart</span>
+        <div class="repair-heart large" aria-hidden="true"><i></i><i></i></div>
+        <p class="for-name">For <span data-friend-name>My Best Friend</span></p>
+        <h1>I know a simple sorry may never be enough...</h1>
+        <p class="hero-copy">But I still wanted to say this properly.</p>
+        <button id="start-btn" class="primary-btn magnetic" type="button">
+          <span>Open My Heart</span><b>→</b>
+        </button>
+      </div>
+      <span class="scroll-hint">A small journey through what I should have said</span>
+    </section>
+
+    <section class="scene" data-scene="1" id="sorry-letter">
+      <div class="scene-heading">
+        <span class="eyebrow">No defence. Just honesty.</span>
+        <h2>I Am Sorry</h2>
+      </div>
+      <article class="letter-wrap tilt-card" tabindex="0">
+        <div class="letter-paper">
+          <span class="letter-shine"></span>
+          <p class="letter-kicker">Dear <span data-friend-name>Miniiee</span>,</p>
+          <h3>I'm Truly Very Sorry.</h3>
+          <p id="apology-text"></p>
+          <p class="no-excuse-copy">No excuses. No blame. Just a sincere apology for the hurt I caused.</p>
+          <div class="signature">— <span data-your-name>Your Friend</span></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="scene" data-scene="2" id="realised">
+      <div class="scene-heading">
+        <span class="eyebrow">What this taught me</span>
+        <h2>What I Realised</h2>
+      </div>
+      <div id="realisation-grid" class="realisation-grid"></div>
+    </section>
+
+    <section class="scene gallery-scene" data-scene="3" id="memories">
+      <div class="scene-heading">
+        <span class="eyebrow">The moments I still hold close</span>
+        <h2>We Look Good Like This</h2>
+      </div>
+      <div id="memory-stage" class="memory-stage" aria-label="Friendship memories"></div>
+      <!-- <p class="gallery-note">Replace the demo gradients with your photos from <code>assets/images</code>.</p> -->
+    </section>
+
+    <section class="scene" data-scene="4" id="chat-reflection">
+      <div class="scene-heading">
+        <span class="eyebrow">The conversation I replayed in my head</span>
+        <h2>What I Wish I Had Said</h2>
+      </div>
+      <div class="phone-shell">
+        <div class="phone-top"><span></span><strong data-friend-name>Best Friend</strong><small>online</small></div>
+        <div id="chat-window" class="chat-window" aria-live="polite"></div>
+        <div class="typing-row"><span></span><span></span><span></span></div>
+      </div>
+    </section>
+
+    <section class="scene no-excuses-scene" data-scene="5" id="no-excuses">
+      <div class="spotlight" aria-hidden="true"></div>
+      <div id="truth-lines" class="truth-lines"></div>
+    </section>
+
+    <section class="scene" data-scene="6" id="final-card">
+      <div class="scene-heading">
+        <span class="eyebrow">One final truth</span>
+        <h2>From My Heart</h2>
+      </div>
+      <article class="final-apology-card" id="download-card">
+        <span class="animated-border"></span>
+        <div class="mini-collage" id="mini-collage"></div>
+        <div class="card-content">
+          <span class="tiny-label">For <span data-friend-name>My Best Friend</span></span>
+          <h3>I am deeply sorry.</h3>
+          <p id="final-message"></p>
+          <div class="signature">Always, <span data-your-name>Your Friend</span></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="scene" data-scene="7" id="forgive">
+      <div class="forgive-card">
+        <span class="eyebrow">No pressure. Your feelings matter.</span>
+        <h2>Will You Forgive Me?</h2>
+        <p>Choose whatever feels honest. I will respect your space and your answer.</p>
+        <div id="response-buttons" class="response-buttons"></div>
+        <div id="response-message" class="response-message" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="scene ending-scene" data-scene="8" id="ending">
+      <div class="dawn" aria-hidden="true"></div>
+      <div class="ending-content">
+        <div class="repair-heart complete" aria-hidden="true"><i></i><i></i></div>
+        <span class="eyebrow">Thank you for staying until the end</span>
+        <h2>I'm truly sorry.</h2>
+        <p>I hope we can continue smiling together forever.</p>
+        <p>I'll always value this friendship.</p>
+        <p>I LOVE YOU SO SO MUCH MINTYAA 💖💛🧡</p>
+        <div class="ending-actions">
+          <button class="secondary-btn" data-action="replay">Replay</button>
+          <button class="secondary-btn" data-jump="3">View Memories Again</button>
+          <button class="secondary-btn" data-jump="1">Open Letter Again</button>
+          <button class="primary-btn" id="download-btn">Download Apology Card</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside id="control-dock" class="control-dock hidden" aria-label="Experience controls">
+    <button data-control="prev" aria-label="Previous scene">←</button>
+    <button data-control="play" aria-label="Play or pause">▶</button>
+    <button data-control="next" aria-label="Next scene">→</button>
+    <button data-control="mute" aria-label="Mute or unmute">♪</button>
+    <button data-control="fullscreen" aria-label="Toggle fullscreen">⛶</button>
+    <div class="volume-wrap"><input id="volume" type="range" min="0" max="1" step="0.05" value="0.55" aria-label="Music volume" /></div>
+    <div class="visualizer" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="dock-progress"><span id="dock-progress-bar"></span></div>
+    <small id="scene-counter">1 / 9</small>
+  </aside>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <audio id="bg-music" preload="metadata" loop></audio>
+  <audio id="tiny-sound" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
