@@ -7,6 +7,7 @@ const CONFIG = {
   apology: "I have thought about what happened, and I understand that my words and actions hurt you. You deserved more patience, more understanding, and a friend who listened before reacting. I cannot undo that moment, but I can take responsibility for it—and I truly do.",
   finalMessage: "Our friendship means far more to me than my pride, a misunderstanding, or one painful moment. I am not asking you to forget what happened. I am asking for the chance to show, through better actions, how much I value you.",
   secretMessage: "No matter how angry or distant things feel, you will loved by MS infinitely 💖🥰.....because 'Over Every Misunderstanding' you will always matter to me the most",
+  finalSecretMessage: "Behind this apology is one simple truth: losing our bond would hurt more than putting my pride aside. You are precious to me, Miniiee, and I will always choose our friendship. 💖",
   music: "assets/music/background.mp3",
   tinySound: "assets/sounds/chime.mp3",
   sceneTiming: 11500,
@@ -452,9 +453,12 @@ function startTruthAnimation() {
         clearTimeout(secretTapTimer);
         secretTapCount += 1;
 
-        if (secretTapCount >= 3) {
+        if (secretTapCount >= 2) {
           secretTapCount = 0;
-          openSecret();
+          const message = target.closest("#final-card")
+            ? CONFIG.finalSecretMessage
+            : CONFIG.secretMessage;
+          openSecret(message);
           return;
         }
 
@@ -465,8 +469,9 @@ function startTruthAnimation() {
     });
   }
 
-  function openSecret() {
+  function openSecret(message = CONFIG.secretMessage) {
     const secret = $("#secret-message");
+    $("p", secret).textContent = message;
     secret.classList.add("open");
     secret.setAttribute("aria-hidden", "false");
     playTinySound(.3);
