@@ -6,7 +6,7 @@ const CONFIG = {
   yourName: "MS",
   apology: "I have thought about what happened, and I understand that my words and actions hurt you. You deserved more patience, more understanding, and a friend who listened before reacting. I cannot undo that moment, but I can take responsibility for it—and I truly do.",
   finalMessage: "Our friendship means far more to me than my pride, a misunderstanding, or one painful moment. I am not asking you to forget what happened. I am asking for the chance to show, through better actions, how much I value you.",
-  secretMessage: "No matter how angry or distant things feel, you will always matter to me.",
+  secretMessage: "No matter how angry or distant things feel, you will loved by MS infinitely 💖🥰.....because 'Over Every Misunderstanding' you will always matter to me the most",
   music: "assets/music/background.mp3",
   tinySound: "assets/sounds/chime.mp3",
   sceneTiming: 11500,
@@ -1223,7 +1223,94 @@ function startTruthAnimation() {
     }
   }
 
+
+  function createInfiniteLovePopup() {
+    let trigger = $("#infinite-love-trigger");
+
+    if (!trigger) {
+      const loveLine = $$("#ending .ending-content p").find(paragraph =>
+        paragraph.textContent.includes("I LOVE YOU SO SO MUCH MINTYAA")
+      );
+
+      if (loveLine) {
+        trigger = document.createElement("button");
+        trigger.id = "infinite-love-trigger";
+        trigger.className = "infinite-love-trigger";
+        trigger.type = "button";
+        trigger.textContent = loveLine.textContent;
+        trigger.setAttribute("aria-haspopup", "dialog");
+        loveLine.replaceWith(trigger);
+      }
+    }
+
+    if (!trigger || $("#infinite-love-popup")) return;
+
+    const popup = document.createElement("div");
+    popup.className = "infinite-love-popup";
+    popup.id = "infinite-love-popup";
+    popup.setAttribute("aria-hidden", "true");
+
+    popup.innerHTML = `
+      <div class="infinite-love-card" role="dialog" aria-modal="true" aria-labelledby="infinite-love-title">
+        <button class="infinite-love-close" type="button" aria-label="Close love message">×</button>
+        <span class="infinite-love-heart" aria-hidden="true">♥</span>
+        <p class="infinite-love-label">A little forever from my heart</p>
+        <h3 id="infinite-love-title" class="infinite-love-title" aria-label="I love you Mintyaa infinitely"></h3>
+        <div class="infinite-love-glow" aria-hidden="true"></div>
+      </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    const title = $("#infinite-love-title", popup);
+    const closeButton = $(".infinite-love-close", popup);
+    const words = ["I", "LOVE", "YOU", "MINTYAA", "INFINITELY💛🧡💛"];
+
+    function buildWords() {
+      title.innerHTML = "";
+      words.forEach((word, index) => {
+        const span = document.createElement("span");
+        span.className = "infinite-love-word";
+        span.textContent = word;
+        span.style.setProperty("--word-delay", `${220 + index * 260}ms`);
+        title.appendChild(span);
+      });
+    }
+
+    function openInfiniteLove() {
+      buildWords();
+      popup.classList.remove("open");
+      void popup.offsetWidth;
+      popup.classList.add("open");
+      popup.setAttribute("aria-hidden", "false");
+      document.body.dataset.modalOpen = "true";
+      playTinySound(.3);
+      burstParticles(innerWidth / 2, innerHeight / 2, 30);
+      setTimeout(() => closeButton.focus(), 180);
+    }
+
+    function closeInfiniteLove() {
+      popup.classList.remove("open");
+      popup.setAttribute("aria-hidden", "true");
+      delete document.body.dataset.modalOpen;
+      trigger.focus();
+    }
+
+    trigger.addEventListener("click", openInfiniteLove);
+    closeButton.addEventListener("click", closeInfiniteLove);
+    popup.addEventListener("click", event => {
+      if (event.target === popup) closeInfiniteLove();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && popup.classList.contains("open")) {
+        closeInfiniteLove();
+      }
+    });
+  }
+
   hydrate();
+  createInfiniteLovePopup();
   loader();
   bindControls();
   effects();

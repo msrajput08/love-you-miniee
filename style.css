@@ -2377,3 +2377,242 @@ body[data-heart-stage="3"] .loading-heart span {
     --enter-x: -13vw;
   }
 }
+
+/* ---------- Clickable infinite-love message ---------- */
+.infinite-love-trigger {
+  appearance: none;
+  display: inline-block;
+  margin: .45rem 0;
+  padding: .2rem .55rem;
+  border: 0;
+  border-radius: 999px;
+  color: #ffd3e8;
+  background: transparent;
+  cursor: pointer;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  font-weight: 600;
+  line-height: 1.35;
+  text-shadow: 0 0 20px rgba(255, 145, 200, .34);
+  transition: transform .35s var(--ease-soft), color .35s, text-shadow .35s;
+}
+
+.infinite-love-trigger:hover,
+.infinite-love-trigger:focus-visible {
+  color: #fff0f8;
+  transform: translateY(-2px) scale(1.025);
+  text-shadow: 0 0 28px rgba(255, 145, 200, .72);
+}
+
+.infinite-love-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  background: rgba(7, 3, 13, .72);
+  backdrop-filter: blur(16px) saturate(125%);
+  -webkit-backdrop-filter: blur(16px) saturate(125%);
+  transition: opacity .45s var(--ease-soft), visibility .45s;
+}
+
+.infinite-love-popup.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.infinite-love-card {
+  position: relative;
+  width: min(680px, 94vw);
+  min-height: 360px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  overflow: hidden;
+  padding: clamp(42px, 7vw, 76px) clamp(24px, 6vw, 66px);
+  border: 2px solid rgba(255, 137, 194, .88);
+  border-radius: 38px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 5%, rgba(255, 167, 210, .2), transparent 34%),
+    linear-gradient(145deg, rgba(70, 18, 52, .96), rgba(28, 10, 39, .97));
+  box-shadow:
+    0 35px 110px rgba(0, 0, 0, .62),
+    0 0 0 7px rgba(255, 145, 200, .08),
+    0 0 70px rgba(255, 105, 180, .35),
+    inset 0 0 55px rgba(255, 176, 217, .08);
+  transform: translateY(28px) scale(.88);
+  filter: blur(8px);
+  transition: transform .7s var(--ease-soft), filter .6s var(--ease-soft);
+}
+
+.infinite-love-popup.open .infinite-love-card {
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+.infinite-love-card::before,
+.infinite-love-card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.infinite-love-card::before {
+  inset: 9px;
+  border: 1px solid rgba(255, 211, 232, .3);
+  border-radius: 29px;
+}
+
+.infinite-love-card::after {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: rgba(255, 106, 178, .17);
+  filter: blur(55px);
+  animation: infiniteLoveGlow 3.2s ease-in-out infinite alternate;
+}
+
+.infinite-love-close {
+  position: absolute;
+  z-index: 3;
+  top: 15px;
+  right: 17px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 50%;
+  color: white;
+  background: rgba(255, 255, 255, .08);
+  cursor: pointer;
+  font-size: 1.65rem;
+  line-height: 1;
+  transition: transform .3s var(--ease-soft), background .3s;
+}
+
+.infinite-love-close:hover {
+  background: rgba(255, 145, 200, .22);
+  transform: rotate(90deg) scale(1.06);
+}
+
+.infinite-love-heart {
+  position: relative;
+  z-index: 1;
+  color: #ff83bd;
+  font-size: clamp(3.3rem, 8vw, 5.8rem);
+  line-height: .8;
+  filter: drop-shadow(0 0 24px rgba(255, 116, 181, .72));
+  animation: infiniteLoveBeat 1.45s ease-in-out infinite;
+}
+
+.infinite-love-label {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #ffd5e9;
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.infinite-love-title {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .12em .27em;
+  margin: 0;
+  color: #fff8fc;
+  font-size: clamp(2.25rem, 7vw, 5.2rem);
+  line-height: .92;
+  text-shadow: 0 0 26px rgba(255, 151, 201, .34);
+}
+
+.infinite-love-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(25px) scale(.72) rotate(-3deg);
+  filter: blur(8px);
+}
+
+.infinite-love-popup.open .infinite-love-word {
+  animation: infiniteLoveWordIn .8s var(--ease-soft) forwards;
+  animation-delay: var(--word-delay);
+}
+
+.infinite-love-word:last-child {
+  flex-basis: 100%;
+  margin-top: .12em;
+  color: #ffd89a;
+  font-size: .62em;
+  line-height: 1.12;
+}
+
+.infinite-love-glow {
+  position: absolute;
+  inset: auto 8% -52% 8%;
+  height: 65%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 151, 201, .25), transparent 68%);
+  filter: blur(18px);
+}
+
+@keyframes infiniteLoveWordIn {
+  0% {
+    opacity: 0;
+    transform: translateY(25px) scale(.72) rotate(-3deg);
+    filter: blur(8px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.06) rotate(0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+@keyframes infiniteLoveBeat {
+  0%, 100% { transform: scale(1); }
+  16% { transform: scale(1.14); }
+  30% { transform: scale(1); }
+  46% { transform: scale(1.1); }
+}
+
+@keyframes infiniteLoveGlow {
+  to { transform: scale(1.25); opacity: .75; }
+}
+
+@media (max-width: 600px) {
+  .infinite-love-popup {
+    padding: 14px;
+  }
+
+  .infinite-love-card {
+    width: 100%;
+    min-height: 330px;
+    padding: 56px 20px 44px;
+    border-radius: 29px;
+  }
+
+  .infinite-love-card::before {
+    border-radius: 21px;
+  }
+
+  .infinite-love-title {
+    font-size: clamp(2.15rem, 12vw, 3.55rem);
+  }
+}
