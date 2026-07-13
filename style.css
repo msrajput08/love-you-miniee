@@ -764,11 +764,16 @@ h3 {
 
 .truth-line {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(35px) scale(0.92);
+  filter: blur(10px);
+
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(2.4rem, 5.6vw, 6rem);
   line-height: 1;
-  animation: truthReveal 1s var(--ease) forwards;
+}
+
+#no-excuses.active .truth-line.animate-truth {
+  animation: truthReveal 0.9s var(--ease-soft) forwards;
 }
 
 .truth-line:last-child {
@@ -1240,10 +1245,23 @@ h3 {
   }
 }
 
-@keyframes truthReveal {
-  to {
+ @keyframes truthReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(35px) scale(0.92);
+    filter: blur(10px);
+  }
+
+  65% {
     opacity: 1;
-    transform: none;
+    transform: translateY(-4px) scale(1.02);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
 }
 
@@ -1667,22 +1685,7 @@ h3 {
 }
 
 /* ---------- Reduced motion ---------- */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-  }
 
-  #ambient-canvas,
-  .aurora,
-  .film-grain {
-    display: none;
-  }
-}
 
 
 /* =========================================================
@@ -2280,15 +2283,97 @@ body[data-heart-stage="3"] .loading-heart span {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .scene-transition-overlay,
-  .story-timeline {
-    display: none;
+
+
+
+/* =========================================================
+   WORKING ANIMATION OVERRIDES
+   These final rules intentionally override earlier duplicate
+   scene/reduced-motion declarations in this stylesheet.
+   ========================================================= */
+
+.scene {
+  --enter-x: 0px;
+  --scene-scale: 1.028;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(var(--enter-x), 18px, 0) scale(var(--scene-scale));
+  filter: blur(14px) saturate(.82) brightness(.8);
+  transition:
+    opacity .78s var(--ease-soft),
+    transform 1.05s var(--ease-soft),
+    filter .92s var(--ease-soft),
+    visibility 0s linear .92s;
+  will-change: transform, opacity, filter;
+}
+
+.scene.enter-from-right {
+  --enter-x: 8vw;
+}
+
+.scene.enter-from-left {
+  --enter-x: -8vw;
+}
+
+.scene.active {
+  --enter-x: 0px;
+  --scene-scale: 1;
+  opacity: 1;
+  visibility: visible;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0) saturate(1) brightness(1);
+  transition-delay: 0s;
+}
+
+.scene.exit-to-left,
+.scene.exit-to-right {
+  visibility: visible;
+  opacity: 0;
+  filter: blur(12px) saturate(.75) brightness(.72);
+  pointer-events: none;
+  transition-delay: 0s;
+}
+
+.scene.exit-to-left {
+  transform: translate3d(-7vw, 0, 0) scale(.985);
+}
+
+.scene.exit-to-right {
+  transform: translate3d(7vw, 0, 0) scale(.985);
+}
+
+.scene .reveal-item {
+  opacity: 0;
+  transform: translateY(26px) scale(.985);
+  filter: blur(7px);
+  will-change: opacity, transform, filter;
+}
+
+.scene.active .reveal-item {
+  animation: staggerReveal .85s var(--ease-soft) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* Truth lines use only their dedicated one-by-one animation. */
+.truth-line {
+  animation: none;
+}
+
+#no-excuses.active .truth-line.animate-truth {
+  animation: truthReveal .9s var(--ease-soft) forwards;
+  animation-delay: inherit;
+}
+
+/* Keep the requested cinematic motion active even when the device has
+   a global reduced-motion preference enabled. */
+
+
+@media (max-width: 600px) {
+  .scene.enter-from-right {
+    --enter-x: 13vw;
   }
 
-  .scene .reveal-item {
-    opacity: 1;
-    transform: none;
-    filter: none;
+  .scene.enter-from-left {
+    --enter-x: -13vw;
   }
 }

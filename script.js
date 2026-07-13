@@ -86,7 +86,7 @@ const CONFIG = {
   const music = $("#bg-music");
   const sound = $("#tiny-sound");
   const dock = $("#control-dock");
-  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reducedMotion = false; // Keep this cinematic experience animated on every device.
 
   let current = 0;
   let started = false;
@@ -231,17 +231,38 @@ const CONFIG = {
   }
 
   function renderTruths() {
-    const root = $("#truth-lines");
-    root.innerHTML = "";
+  const root = $("#truth-lines");
 
-    CONFIG.truths.forEach((line, index) => {
-      const element = document.createElement("div");
-      element.className = "truth-line";
-      element.textContent = line;
-      element.style.animationDelay = `${index * 1.05}s`;
-      root.appendChild(element);
-    });
-  }
+  root.innerHTML = "";
+
+  CONFIG.truths.forEach((line) => {
+    const el = document.createElement("div");
+
+    el.className = "truth-line";
+    el.textContent = line;
+
+    root.appendChild(el);
+  });
+}
+
+function startTruthAnimation() {
+  const lines = $$(".truth-line");
+
+  // Purani animation reset
+  lines.forEach(line => {
+    line.classList.remove("animate-truth");
+    line.style.animationDelay = "0ms";
+  });
+
+  // Browser ko reset detect karne do
+  void $("#truth-lines").offsetWidth;
+
+  // Ek-ek line animate karo
+  lines.forEach((line, index) => {
+    line.style.animationDelay = `${index * 900}ms`;
+    line.classList.add("animate-truth");
+  });
+}
 
   function renderResponses() {
     const root = $("#response-buttons");
@@ -468,7 +489,6 @@ const CONFIG = {
         ".realisation-card",
         ".memory-card",
         ".phone-shell",
-        ".truth-line",
         ".final-apology-card",
         ".forgive-card > *",
         ".ending-content > *"
@@ -481,6 +501,29 @@ const CONFIG = {
         element.classList.add("reveal-item");
         element.style.setProperty("--reveal-delay", `${90 + index * 85}ms`);
       });
+    });
+  }
+
+  function restartRevealAnimations(scene) {
+    if (!scene) return;
+
+    const items = $$(".reveal-item", scene);
+
+    items.forEach(item => {
+      item.style.animation = "none";
+      item.style.opacity = "0";
+      item.style.transform = "translateY(26px) scale(.985)";
+      item.style.filter = "blur(7px)";
+    });
+
+    // Force a reflow so the browser treats the next animation as a fresh run.
+    void scene.offsetWidth;
+
+    items.forEach(item => {
+      item.style.removeProperty("animation");
+      item.style.removeProperty("opacity");
+      item.style.removeProperty("transform");
+      item.style.removeProperty("filter");
     });
   }
 
@@ -516,26 +559,35 @@ const CONFIG = {
 
   function goTo(index, userInitiated = false) {
     index = Math.max(0, Math.min(scenes.length - 1, index));
+
     if (index === current && started) return;
 
     clearTimeout(sceneTimer);
     clearTimeout(chatTimer);
 
     const previous = current;
-    const direction = index > previous ? 1 : -1;
+    const direction = index >= previous ? 1 : -1;
     const oldScene = scenes[previous];
     const newScene = scenes[index];
+
+    $$(".truth-line").forEach(line => {
+      line.classList.remove("animate-truth");
+      line.style.animationDelay = "0ms";
+    });
 
     playTransition(direction);
 
     oldScene.classList.remove(
-      "active",
       "enter-from-left",
       "enter-from-right",
       "exit-to-left",
       "exit-to-right"
     );
-    oldScene.classList.add(direction > 0 ? "exit-to-left" : "exit-to-right");
+
+    if (oldScene !== newScene) {
+      oldScene.classList.remove("active");
+      oldScene.classList.add(direction > 0 ? "exit-to-left" : "exit-to-right");
+    }
 
     newScene.classList.remove(
       "active",
@@ -546,22 +598,31 @@ const CONFIG = {
     );
     newScene.classList.add(direction > 0 ? "enter-from-right" : "enter-from-left");
 
+    restartRevealAnimations(newScene);
+
     current = index;
     updateSceneState();
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         newScene.classList.add("active");
-        newScene.classList.remove("enter-from-left", "enter-from-right");
+
+        // Keep the entry class until the transition has visibly completed.
+        setTimeout(() => {
+          newScene.classList.remove("enter-from-left", "enter-from-right");
+        }, reducedMotion ? 30 : 1080);
+
+        if (current === 4) startChat();
+        if (current === 5) startTruthAnimation();
+        if (current === 3 && !reducedMotion) animateMemoryEntrance();
       });
     });
 
-    setTimeout(() => {
-      oldScene.classList.remove("exit-to-left", "exit-to-right");
-    }, reducedMotion ? 20 : 1050);
-
-    if (current === 4) startChat();
-    if (current === 3 && !reducedMotion) animateMemoryEntrance();
+    if (oldScene !== newScene) {
+      setTimeout(() => {
+        oldScene.classList.remove("exit-to-left", "exit-to-right");
+      }, reducedMotion ? 30 : 1080);
+    }
 
     if (userInitiated) {
       popup(CONFIG.popups[current % CONFIG.popups.length]);
@@ -1170,4 +1231,9 @@ const CONFIG = {
   document.body.dataset.scene = "0";
   document.body.dataset.heartStage = "0";
   updateSceneState();
+
+  requestAnimationFrame(() => {
+    restartRevealAnimations(scenes[0]);
+    scenes[0].classList.add("active");
+  });
 })();
